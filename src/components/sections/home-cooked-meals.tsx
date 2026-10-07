@@ -1,77 +1,78 @@
 "use client";
 
 import { useState } from "react";
-import { motion } from "framer-motion";
 import { CalendarDays, Truck, UtensilsCrossed } from "lucide-react";
-import { TextReveal } from "@/components/effects/text-reveal";
-import { RevealImage } from "@/components/effects/reveal-image";
+import { useSectionReveal } from "@/hooks/use-section-reveal";
+import { GLPhoto } from "@/components/three/gl-photo";
+import { GoldButton } from "@/components/ui/gold-button";
+import { PlankSign, RusticArt, TornEdge } from "@/components/ui/rustic";
 import { OrderDialog } from "@/components/order/order-dialog";
-import { MEAL_PRICE } from "@/lib/order";
+import { DELIVERY_AREAS, MEAL_PRICE, orderDays } from "@/lib/order";
 
 export function HomeCookedMeals() {
   const [orderOpen, setOrderOpen] = useState(false);
+  const root = useSectionReveal<HTMLElement>();
 
   return (
-    <section id="homecooked" className="relative bg-cream-dim py-28 lg:py-36">
+    <section ref={root} id="homecooked" className="paper paper-burnt relative py-24 lg:py-32">
+      <TornEdge side="top" />
+      <TornEdge side="bottom" />
       <div className="container-edge grid items-center gap-16 lg:grid-cols-2 lg:gap-24">
-        <RevealImage
-          src="/shop-images/5.jpeg"
-          alt="Home cooked meal"
-          className="order-2 h-[340px] rounded-sm shadow-2xl shadow-espresso/15 sm:h-[420px] lg:order-1"
-        />
+        <div className="relative order-2 lg:order-1">
+          <div className="relative -rotate-[1.5deg]">
+            <span className="tape -top-3 left-1/2 -translate-x-1/2 -rotate-2" />
+            <GLPhoto
+              src="/shop-images/3.jpeg"
+              alt="Two coffees served on a tray"
+              cursor="Order"
+              base="paper"
+              className="old-photo h-[380px] sm:h-[520px]"
+            />
+          </div>
+          <RusticArt name="lantern" className="absolute -top-16 -right-10 hidden w-32 xl:block" />
+        </div>
 
         <div className="order-1 lg:order-2">
-          <motion.span
-            initial={{ opacity: 0, y: 10 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="font-display text-lg italic text-gold-dark"
-          >
-            From Our Kitchen
-          </motion.span>
+          <div data-sr="fade">
+            <PlankSign size="md">From Our Kitchen</PlankSign>
+          </div>
+          <h2 className="mt-7 text-[clamp(2.6rem,5.6vw,5.2rem)] leading-[0.95]">
+            <span className="mask-line script-line">
+              <span className="font-script text-[1.15em] text-rust">Home cooked</span>
+            </span>
+            <span className="mask-line">
+              <span className="type-heavy letterpress-wood">Meals</span>
+            </span>
+          </h2>
+          <span data-rule className="ink-rule mt-7 max-w-[12rem]" />
+          <p data-sr="up" className="mt-7 max-w-md font-serif text-xl leading-relaxed text-ink">
+            A fresh homecooked plate, Monday to Thursday — pre-order yours for collection or delivery around{" "}
+            {DELIVERY_AREAS.join(" and ")}.
+          </p>
 
-          <TextReveal
-            text="Home Cooked Meals"
-            as="h2"
-            className="mt-2 font-display text-4xl font-medium leading-[1.05] tracking-tight text-espresso sm:text-5xl"
-          />
-
-          <motion.p
-            initial={{ opacity: 0, y: 16 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.7, delay: 0.2 }}
-            className="mt-6 max-w-md text-balance text-base leading-relaxed text-roast-light sm:text-lg"
-          >
-            A fresh homecooked plate, Monday to Thursday — pre-order yours for
-            collection or delivery around Three Rivers and Risiville.
-          </motion.p>
-
-          <div className="mt-8 flex flex-col gap-3">
-            <div className="flex items-center gap-3">
-              <CalendarDays className="h-5 w-5 text-gold-dark" strokeWidth={1.5} />
-              <span className="text-sm text-roast-light">
-                Monday – Thursday only, R{MEAL_PRICE} per plate.
+          <div data-stagger className="mt-10 flex flex-col gap-5">
+            <div className="flex items-center gap-4">
+              <span className="wood grid h-11 w-11 shrink-0 place-items-center rounded-full shadow-[inset_0_0_0_2px_rgb(30_18_8/0.5)]">
+                <CalendarDays className="h-5 w-5 text-ivory" strokeWidth={1.4} />
+              </span>
+              <span className="text-ink-soft">
+                {orderDays[0].label} – {orderDays[orderDays.length - 1].label} only,{" "}
+                <span className="font-poster text-lg font-medium tracking-wide text-rust">R{MEAL_PRICE}</span> per plate.
               </span>
             </div>
-            <div className="flex items-center gap-3">
-              <Truck className="h-5 w-5 text-gold-dark" strokeWidth={1.5} />
-              <span className="text-sm text-roast-light">
-                Free delivery on 5+ plates, within Three Rivers & Risiville.
+            <div className="flex items-center gap-4">
+              <span className="wood grid h-11 w-11 shrink-0 place-items-center rounded-full shadow-[inset_0_0_0_2px_rgb(30_18_8/0.5)]">
+                <Truck className="h-5 w-5 text-ivory" strokeWidth={1.4} />
               </span>
+              <span className="text-ink-soft">Free delivery on 5+ plates, within {DELIVERY_AREAS.join(" & ")}.</span>
             </div>
           </div>
 
-          <div className="mt-8">
-            <button
-              type="button"
-              onClick={() => setOrderOpen(true)}
-              className="inline-flex items-center gap-2 rounded-full bg-ember px-7 py-3.5 text-sm font-medium text-cream transition-colors hover:bg-ember-dark"
-            >
-              <UtensilsCrossed className="h-4 w-4" />
-              Order A Meal
-            </button>
+          <div data-sr="up" className="mt-10">
+            <GoldButton onClick={() => setOrderOpen(true)} variant="ember" size="lg" magnetic>
+              <UtensilsCrossed size={16} />
+              Order a meal
+            </GoldButton>
           </div>
         </div>
       </div>

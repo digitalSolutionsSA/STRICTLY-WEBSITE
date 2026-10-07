@@ -1,167 +1,106 @@
 "use client";
 
-import { useRef } from "react";
-import { motion, useScroll, useTransform, useInView } from "framer-motion";
-import { Heart, Leaf, Sprout, Users } from "lucide-react";
-import { TextReveal } from "@/components/effects/text-reveal";
-import { RevealImage } from "@/components/effects/reveal-image";
+import { ArrowRight, Heart, Leaf, Sprout, Users } from "lucide-react";
+import { useSectionReveal } from "@/hooks/use-section-reveal";
+import { GLPhoto } from "@/components/three/gl-photo";
+import { GoldButton } from "@/components/ui/gold-button";
+import { PlankSign, RusticArt, TornEdge } from "@/components/ui/rustic";
 
-const milestones = [
-  {
-    icon: Sprout,
-    title: "Sourced With Care",
-    text: "We hand-select quality beans and fresh local ingredients, chosen for character and consistency in every cup and plate.",
-  },
-  {
-    icon: Heart,
-    title: "Made With Heart",
-    text: "Every coffee is crafted to order and every meal is homecooked fresh — nothing rushed, nothing pre-packaged.",
-  },
-  {
-    icon: Users,
-    title: "Where Friends Meet",
-    text: "Our coffee house in Riversquare Mall has become a gathering place — for catch-ups, quiet mornings and shared platters.",
-  },
-  {
-    icon: Leaf,
-    title: "A Space To Belong",
-    text: "Warm, welcoming and unhurried — Strictly Come Coffee is designed to feel like a second home in Three Rivers.",
-  },
+const features = [
+  { icon: Sprout, title: "Sourced With Care", sub: "Quality beans" },
+  { icon: Heart, title: "Made With Heart", sub: "Crafted to order" },
+  { icon: Users, title: "Where Friends Meet", sub: "Good company" },
+  { icon: Leaf, title: "A Space To Belong", sub: "Your second home" },
 ];
 
+/** "More Than Just Coffee" — a parchment page with a calligraphy heading and old taped-in photographs. */
 export function Story() {
-  const ref = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ["start 0.8", "end 0.3"],
-  });
-  const lineHeight = useTransform(scrollYProgress, [0, 1], ["0%", "100%"]);
-
-  // Tracked on an untransformed wrapper — the beans graphic itself is
-  // scaled/faded via transform, so its own bounding box wouldn't reliably
-  // report intersection. once: false so it replays every time the section
-  // scrolls into view, not just the first time.
-  const beansRef = useRef<HTMLDivElement>(null);
-  const beansInView = useInView(beansRef, { once: false, amount: 0.3 });
+  const root = useSectionReveal<HTMLElement>();
 
   return (
-    <section id="story" className="relative bg-cream py-28 lg:py-36">
-      {/* Beans exploding out from the center to fill the section */}
-      <div
-        ref={beansRef}
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 z-0 overflow-hidden"
-      >
-        <motion.img
-          src="/graphics/beans.png"
-          alt=""
-          initial={{ opacity: 0, scale: 0.05 }}
-          animate={
-            beansInView
-              ? { opacity: 0.32, scale: 1 }
-              : { opacity: 0, scale: 0.05 }
-          }
-          transition={{ duration: 1.3, ease: [0.16, 1, 0.3, 1] }}
-          className="h-full w-full object-cover"
-        />
-      </div>
+    <section ref={root} id="story" className="paper paper-burnt relative py-24 sm:py-32">
+      <TornEdge side="top" />
+      <TornEdge side="bottom" />
+      <RusticArt name="lantern" className="absolute -top-2 right-[3%] hidden w-36 opacity-90 xl:block" />
 
-      <div className="container-edge relative z-10 grid gap-16 lg:grid-cols-2 lg:gap-24">
-        {/* Image stack */}
-        <div className="relative h-[420px] sm:h-[520px] lg:h-auto">
-          <RevealImage
-            src="/shop-images/2.jpeg"
-            alt="Strictly Come Coffee interior"
-            className="absolute left-0 top-0 h-[78%] w-[78%] rounded-sm shadow-2xl shadow-espresso/20"
-          />
-          <RevealImage
-            src="/shop-images/3.jpeg"
-            alt="Freshly brewed coffee"
-            delay={0.25}
-            className="absolute bottom-0 right-0 h-[55%] w-[55%] rounded-sm border-8 border-cream shadow-2xl shadow-espresso/30"
-          />
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.7, delay: 0.6, ease: [0.16, 1, 0.3, 1] }}
-            className="absolute -bottom-6 left-4 flex h-28 w-28 flex-col items-center justify-center rounded-full border border-gold/30 bg-espresso text-center text-cream shadow-xl sm:h-32 sm:w-32"
-          >
-            <span className="font-display text-3xl font-semibold text-gold">98%</span>
-            <span className="text-[0.6rem] uppercase tracking-[0.2em] text-cream/70">
-              Recommended
+      <div className="container-edge relative grid items-center gap-16 lg:grid-cols-[1fr_1.1fr] lg:gap-20">
+        <div>
+          <div data-sr="fade">
+            <PlankSign size="md">Our Story</PlankSign>
+          </div>
+          <h2 className="mt-6 origin-left -rotate-2 font-script text-[clamp(3.8rem,7.5vw,6.6rem)] leading-[1] text-wood">
+            <span className="mask-line script-line">
+              <span>More Than</span>
             </span>
-          </motion.div>
+            <span className="mask-line script-line" style={{ "--indent": "2.5rem" } as React.CSSProperties}>
+              <span>Just Coffee</span>
+            </span>
+          </h2>
+          <span data-rule className="ink-rule mt-6 max-w-sm" />
+          <p data-sr="up" className="mt-8 max-w-lg font-serif text-xl leading-relaxed text-ink sm:text-2xl">
+            Strictly Come Coffee began with a simple idea — bring people together over great coffee and honest, homecooked
+            food.
+          </p>
+          <p data-sr="up" data-sr-delay="100" className="mt-5 max-w-lg leading-relaxed text-ink-soft">
+            Tucked away in Riversquare Mall, Three Rivers, it&apos;s become a favourite spot for locals to slow down, catch up and
+            treat themselves — warm, welcoming and unhurried.
+          </p>
+          <div data-sr="up" data-sr-delay="200" className="mt-10">
+            <GoldButton href="/menu" variant="ink">
+              See what&apos;s brewing <ArrowRight size={14} />
+            </GoldButton>
+          </div>
         </div>
 
-        {/* Text + timeline */}
-        <div ref={ref} className="flex flex-col">
-          <motion.span
-            initial={{ opacity: 0, y: 10 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="font-display text-lg italic text-gold-dark"
-          >
-            Our Story
-          </motion.span>
-
-          <TextReveal
-            text="A Cup Made With Heart"
-            as="h2"
-            className="mt-2 font-display text-4xl font-medium leading-[1.05] tracking-tight text-espresso sm:text-5xl lg:text-6xl"
-          />
-
-          <motion.p
-            initial={{ opacity: 0, y: 16 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.7, delay: 0.2 }}
-            className="mt-6 max-w-lg text-balance text-base leading-relaxed text-roast-light sm:text-lg"
-          >
-            Strictly Come Coffee began with a simple idea — bring people together
-            over great coffee and honest, homecooked food. Tucked away in
-            Riversquare Mall, Three Rivers, it&apos;s become a favourite spot for
-            locals to slow down, catch up and treat themselves.
-          </motion.p>
-
-          {/* Timeline */}
-          <div className="relative mt-14 pl-10">
-            <div className="absolute left-[7px] top-2 h-[calc(100%-1rem)] w-px bg-beige-dark/60" />
-            <motion.div
-              style={{ height: lineHeight }}
-              className="absolute left-[7px] top-2 w-px bg-gold"
+        <div className="relative h-[28rem] sm:h-[34rem]">
+          <div className="absolute inset-y-0 right-0 w-[74%] rotate-[1.5deg]">
+            <span className="tape -top-3 left-1/2 -translate-x-1/2 -rotate-3" />
+            <GLPhoto
+              src="/shop-images/2.jpeg"
+              alt="The Strictly Come Coffee dining room, with its floral mural and hanging greenery"
+              cursor="Ripple"
+              focus={[0.5, 0.45]}
+              base="paper"
+                className="old-photo h-full w-full"
             />
-
-            <div className="flex flex-col gap-12">
-              {milestones.map((m, i) => (
-                <motion.div
-                  key={m.title}
-                  initial={{ opacity: 0, x: -24 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true, amount: 0.6 }}
-                  transition={{ duration: 0.6, delay: i * 0.05, ease: [0.16, 1, 0.3, 1] }}
-                  className="relative"
-                >
-                  <span className="absolute -left-10 top-1 flex h-4 w-4 items-center justify-center rounded-full border-2 border-gold bg-cream" />
-                  <div className="flex items-start gap-4">
-                    <div className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-beige text-gold-dark">
-                      <m.icon className="h-5 w-5" strokeWidth={1.5} />
-                    </div>
-                    <div>
-                      <h3 className="font-display text-xl font-medium text-espresso">
-                        {m.title}
-                      </h3>
-                      <p className="mt-1.5 max-w-md text-sm leading-relaxed text-roast-light">
-                        {m.text}
-                      </p>
-                    </div>
-                  </div>
-                </motion.div>
-              ))}
+          </div>
+          <div data-parallax="14" className="absolute bottom-[-1.5rem] left-0 h-[56%] w-[50%]">
+            <div className="relative h-full w-full -rotate-3">
+              <span className="tape -top-3 left-6 rotate-[-8deg]" />
+              <GLPhoto
+                src="/shop-images/4.jpeg"
+                alt="A framed watercolour sketch of the coffee shop counter"
+                focus={[0.5, 0.5]}
+                base="paper"
+                className="old-photo h-full w-full"
+              />
+            </div>
+          </div>
+          <div
+            data-sr="zoom"
+            data-sr-delay="400"
+            className="wood absolute right-4 -bottom-8 grid h-28 w-28 place-items-center rounded-full text-center shadow-[0_14px_30px_-10px_rgb(40_24_12/0.8),inset_0_0_0_2px_rgb(30_18_8/0.6),inset_0_0_0_6px_rgb(255_225_180/0.12)] sm:h-32 sm:w-32"
+          >
+            <div>
+              <span className="sign-paint block font-poster text-3xl font-semibold">98%</span>
+              <span className="text-[0.55rem] uppercase tracking-[0.25em] text-ivory/80">Recommended</span>
             </div>
           </div>
         </div>
+      </div>
+
+      <div data-stagger className="container-edge relative mt-28 grid grid-cols-2 gap-y-10 border-y border-ink/20 py-10 md:grid-cols-4">
+        {features.map(({ icon: Icon, title, sub }) => (
+          <div key={title} className="group flex flex-col items-center text-center">
+            <Icon
+              size={34}
+              strokeWidth={1.2}
+              className="text-rust transition-transform duration-500 group-hover:-translate-y-1 group-hover:scale-110"
+            />
+            <h3 className="mt-4 font-poster text-base font-medium uppercase tracking-[0.12em] text-ink">{title}</h3>
+            <p className="mt-1 font-serif text-sm italic text-ink-soft">{sub}</p>
+          </div>
+        ))}
       </div>
     </section>
   );
